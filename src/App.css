@@ -1,0 +1,122 @@
+:root {
+  --bg-color: #050608;
+  --panel-bg: rgba(255, 255, 255, 0.03);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --accent-gold: linear-gradient(135deg, #fdb813, #784ba0); /* Cyber Gold */
+  --accent-silver: linear-gradient(135deg, #e6e8fa, #adadad);
+  --accent-bronze: linear-gradient(135deg, #cd7f32, #6b3e26);
+  --text-main: #ffffff;
+  --text-dim: #a0a0a0;
+  --glass-blur: blur(12px);
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.glass-card {
+  background: var(--panel-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+.neon-glow {
+  box-shadow: 0 0 20px rgba(253, 184, 19, 0.2);
+}
+
+.btn-primary {
+  background: var(--accent-gold);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.ans-badge {
+  font-size: 1.2rem;
+  font-weight: 800;
+  padding: 10px 20px;
+  border-radius: 12px;
+  text-align: center;
+  display: inline-block;
+  margin: 5px;
+}
+
+.gold { 
+  background: linear-gradient(135deg, #FFD700, #B8860B);
+  color: #241d00;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+}
+
+.silver {
+  background: linear-gradient(135deg, #C0C0C0, #708090);
+  color: #1a1a1a;
+  box-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
+}
+
+.bronze {
+  background: linear-gradient(135deg, #CD7F32, #8B4513);
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(205, 127, 50, 0.2);
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.live-indicator {
+  width: 10px;
+  height: 10px;
+  background: #ff4b4b;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  animation: pulse 1.5s infinite;
+}
+
+.input-glass {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: white;
+  padding: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  outline: none;
+}
+
+.input-glass:focus {
+  border-color: #fdb813;
+}
+
+.select-glass {
+  background: #1a1c22;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: white;
+  padding: 10px;
+  width: 100%;
+}

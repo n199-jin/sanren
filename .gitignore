@@ -1,0 +1,6 @@
+node_modules
+dist
+db.json
+package-lock.json
+.DS_Store
+*.local
