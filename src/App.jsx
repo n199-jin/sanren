@@ -100,7 +100,7 @@ function ParticipantView({ state, myName, setMyName, guesses, setGuesses, submit
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <h2 style={{ margin: 0, fontWeight: 800, letterSpacing: '2px', background: 'var(--accent-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-          SANRENTAN PRO
+          SANRENTAN
         </h2>
       </div>
 
