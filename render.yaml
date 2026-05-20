@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: sanrentan-pro
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.x
