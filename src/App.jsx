@@ -19,6 +19,17 @@ import './App.css';
 
 const socket = io();
 
+function calculateScore(correct, guess) {
+  if (!correct || !guess || correct.length < 3 || guess.length < 3) return 0;
+  if (JSON.stringify(correct) === JSON.stringify(guess)) return 6; // サンレンタン
+  const matched = guess.filter(g => correct.includes(g)).length;
+  if (matched === 3) return 4; // サンレンプク
+  if (correct[0] === guess[0] && correct[1] === guess[1]) return 3; // 1-2位
+  if (matched === 2) return 2; // 2つ的中
+  if (correct[0] === guess[0]) return 1; // 1位的中
+  return 0;
+}
+
 function App() {
   const [state, setState] = useState({
     current_q: 1,
@@ -37,7 +48,16 @@ function App() {
   useEffect(() => {
     socket.on('sync-state', (newState) => {
       setState(newState);
-      if (!newState.is_open) setVoteSuccess(false);
+      if (!newState.is_open) {
+        setVoteSuccess(false);
+      } else {
+        const saved = localStorage.getItem(`sanrentan_guess_${newState.current_q}`);
+        if (saved) {
+          setVoteSuccess(true);
+        } else {
+          setVoteSuccess(false);
+        }
+      }
     });
 
     socket.on('vote-success', () => setVoteSuccess(true));
@@ -59,6 +79,7 @@ function App() {
     if (!myName.trim()) return alert("名前を入力してください");
     if (new Set(guesses).size !== 3 || guesses.includes('')) return alert("重複なく3名選んでください");
     localStorage.setItem('sanrentan_name', myName);
+    localStorage.setItem(`sanrentan_guess_${state.current_q}`, JSON.stringify(guesses));
     socket.emit('submit-vote', { name: myName, guesses });
   };
 
@@ -96,6 +117,11 @@ function ParticipantView({ state, myName, setMyName, guesses, setGuesses, submit
     return <RankingView ranking={ranking} goBack={() => setIsRankingView(false)} />;
   }
 
+  // ローカル保存された自身の予想からこの問題の獲得ポイントを計算
+  const savedGuessesStr = localStorage.getItem(`sanrentan_guess_${state.current_q}`);
+  const savedGuesses = savedGuessesStr ? JSON.parse(savedGuessesStr) : null;
+  const pointsEarned = savedGuesses ? calculateScore(state.last_ans, savedGuesses) : null;
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
        <div className="flex-between" style={{ marginBottom: '30px' }}>
@@ -116,9 +142,27 @@ function ParticipantView({ state, myName, setMyName, guesses, setGuesses, submit
                   <div className="ans-badge silver">🥈 {state.last_ans[1]}</div>
                   <div className="ans-badge bronze">🥉 {state.last_ans[2]}</div>
               </div>
-              <button onClick={() => { loadRanking(); setIsRankingView(true); }} className="btn-secondary" style={{ marginTop: '40px' }}>
-                  自分の順位を確認
-              </button>
+
+              {/* 自分の予想と獲得ポイントの表示 */}
+              <div style={{ marginTop: '30px', padding: '20px', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                  {savedGuesses ? (
+                      <>
+                          <div style={{ color: 'var(--text-dim)', fontSize: '0.85rem', marginBottom: '8px' }}>あなたの予想</div>
+                          <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', fontSize: '0.9rem', marginBottom: '15px' }}>
+                              <span>1位: <strong>{savedGuesses[0]}</strong></span>
+                              <span>2位: <strong>{savedGuesses[1]}</strong></span>
+                              <span>3位: <strong>{savedGuesses[2]}</strong></span>
+                          </div>
+                          <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+                              獲得ポイント: <span style={{ color: '#10b981', fontSize: '1.5rem' }}>{pointsEarned}</span> pts
+                          </div>
+                      </>
+                  ) : (
+                      <div style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>
+                          この問題は未投票です
+                      </div>
+                  )}
+              </div>
           </div>
         ) : state.is_open ? (
           !voteSuccess ? (
