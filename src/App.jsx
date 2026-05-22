@@ -64,7 +64,14 @@ function App() {
     socket.on('ranking-data', (data) => setRanking(data));
     socket.on('ranking-reveal-update', (step) => setRevealStep(step));
     socket.on('votes-reset', (qNum) => {
-      localStorage.removeItem(`sanrentan_guess_${qNum}`);
+      if (qNum === null) {
+        // 全問リセット: sanrentan_guess_* を全削除
+        Object.keys(localStorage)
+          .filter(k => k.startsWith('sanrentan_guess_'))
+          .forEach(k => localStorage.removeItem(k));
+      } else {
+        localStorage.removeItem(`sanrentan_guess_${qNum}`);
+      }
       setVoteSuccess(false);
       setGuesses(['', '', '']);
     });
@@ -449,7 +456,25 @@ function AdminView({ state, socket, ranking, revealStep }) {
             </div>
         </div>
 
-        <div style={{ marginTop: '40px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
+        <div style={{ marginTop: '30px', borderTop: '1px solid rgba(255,75,75,0.3)', paddingTop: '20px', background: 'rgba(255,75,75,0.05)', borderRadius: '8px', padding: '20px' }}>
+            <h3 style={{ color: '#ff4b4b', margin: '0 0 12px 0' }}>⚠️ 全データリセット</h3>
+            <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', margin: '0 0 12px 0' }}>
+                スコア・投票・ユーザーデータをすべて削除し、第1問からやり直します。参加者のブラウザの投票済みフラグも解除されます。
+            </p>
+            <button
+              className="btn-danger"
+              onClick={() => {
+                if (confirm('全データをリセットします。この操作は取り消せません。よろしいですか？')) {
+                  socket.emit('admin-action', { type: 'RESET_ALL' });
+                }
+              }}
+            >
+              <RotateCcw size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+              全データリセット（第1問からやり直し）
+            </button>
+        </div>
+
+        <div style={{ marginTop: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
             <h3>3. 最終ランキング演出コントロール</h3>
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <button className="btn-primary" onClick={() => setStep('LOWER')}><Play size={16} /> 参加者〜11位</button>
