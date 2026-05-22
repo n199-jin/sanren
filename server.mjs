@@ -113,12 +113,15 @@ io.on('connection', (socket) => {
         });
         break;
       case 'RESET_ALL':
-        db = { ...defaultState };
+        db = JSON.parse(JSON.stringify(defaultState));
         break;
     }
-    
+
     saveDB(db);
     io.emit('sync-state', db.settings);
+    if (type === 'RESET_ALL') {
+        io.emit('votes-reset', null); // null = 全問リセット
+    }
     if (type === 'REVEAL_RESULTS') {
         const currentScores = db.scores.filter(s => s.q_id === db.settings.current_q);
         io.emit('results-broadcast', { correct: db.settings.last_ans, scores: currentScores });
