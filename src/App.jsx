@@ -30,7 +30,6 @@ function calculateScore(correct, guess) {
   return 0;
 }
 
-// ローカルストレージから sanrentan_guess_* キーをすべて削除
 function clearAllGuesses() {
   const keys = [];
   for (let i = 0; i < localStorage.length; i++) {
@@ -74,7 +73,7 @@ function App() {
     socket.on('ranking-data', (data) => setRanking(data));
     socket.on('ranking-reveal-update', (step) => setRevealStep(step));
 
-    // 全リセット: サーバーから 'all-reset' が来たらクライアント側の投票記録をすべてクリア
+    // 全リセット: サーバーから 'all-reset' が来たら投票記録をすべてクリア
     socket.on('all-reset', () => {
       clearAllGuesses();
       setVoteSuccess(false);
@@ -96,7 +95,7 @@ function App() {
 
   const submitVote = () => {
     if (!myName.trim()) return alert("名前を入力してください");
-    if (new Set(guesses).size !== 3 || guesses.includes('')) return alert("重複なく3名選んでください");
+    if (new Set(guesses).size !== 3 || guesses.includes('')) return alert("重複なく3つ選んでください");
     localStorage.setItem('sanrentan_name', myName);
     localStorage.setItem(`sanrentan_guess_${state.current_q}`, JSON.stringify(guesses));
     socket.emit('submit-vote', { name: myName, guesses });
@@ -145,7 +144,7 @@ function ParticipantView({ state, myName, setMyName, guesses, setGuesses, submit
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
        <div className="flex-between" style={{ marginBottom: '30px' }}>
         <h2 className="brand-title">
-          SANRENTAN
+          ASPCS25周年記念 サンレンタン
         </h2>
       </div>
 
@@ -157,9 +156,9 @@ function ParticipantView({ state, myName, setMyName, guesses, setGuesses, submit
           <div style={{ marginTop: '20px' }}>
               <h2 style={{ color: 'var(--color-accent)' }}>正解発表</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
-                  <div className="ans-badge gold">🥇 {state.last_ans[0]}</div>
-                  <div className="ans-badge silver">🥈 {state.last_ans[1]}</div>
-                  <div className="ans-badge bronze">🥉 {state.last_ans[2]}</div>
+                  <div className="ans-badge gold">1位 {state.last_ans[0]}</div>
+                  <div className="ans-badge silver">2位 {state.last_ans[1]}</div>
+                  <div className="ans-badge bronze">3位 {state.last_ans[2]}</div>
               </div>
 
               {/* 自分の予想と獲得ポイントの表示 */}
@@ -416,9 +415,8 @@ function MonitorRankingView({ ranking, revealStep }) {
                 padding: '50px 60px'
               }}
             >
-              <div style={{ fontSize: '4rem', marginBottom: '10px' }}>🎁</div>
               <div style={{ fontSize: '1.6rem', fontWeight: 700, opacity: 0.85, marginBottom: '20px' }}>
-                25位 特別賞
+                25周年 特別賞
               </div>
               <div style={{ fontSize: '4rem', fontWeight: 800, lineHeight: 1.1, marginBottom: '12px' }}>
                 {prizeRank.name}
@@ -584,10 +582,10 @@ function AdminView({ state, socket, ranking, revealStep }) {
         </div>
 
         {/* 全リセット（イベントやり直し用） */}
-        <div style={{ marginTop: '40px', borderTop: '1px solid rgba(255,75,75,0.3)', paddingTop: '20px' }}>
+        <div style={{ marginTop: '40px', borderTop: '1px solid #03457A', paddingTop: '20px' }}>
             <h3 style={{ color: 'var(--color-accent)' }}>⚠️ 危険ゾーン</h3>
             <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', margin: '0 0 12px 0' }}>
-                全投票・全ランキングを消去し、問題番号を1に戻します。全ブラウザの投票ロックも解除されます。
+                全投票・全ランキングをリセットします。操作には十分気を付けてください。
             </p>
             <button className="btn-danger" onClick={handleResetAll}>
                 <RotateCcw size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
@@ -598,7 +596,7 @@ function AdminView({ state, socket, ranking, revealStep }) {
 
       {/* 管理者用全順位表示 */}
       <div className="glass-card" style={{ padding: '20px', fontSize: '0.85rem' }}>
-        <h3>📊 リアルタイム全順位</h3>
+        <h3>全順位</h3>
         <div style={{ maxHeight: '650px', overflowY: 'auto' }}>
             {ranking.map((r, i) => (
                 <div key={r.name} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 4px', borderBottom: '1px solid var(--card-border)', background: i === 24 ? 'rgba(255,75,75,0.1)' : 'transparent' }}>
@@ -607,7 +605,7 @@ function AdminView({ state, socket, ranking, revealStep }) {
                 </div>
             ))}
         </div>
-        <button onClick={() => socket.emit('get-ranking')} className="btn-primary" style={{ width: '100%', marginTop: '15px', background: 'rgba(255,255,255,0.05)', fontSize: '0.7rem' }}>ランキングを再計算</button>
+        <button onClick={() => socket.emit('get-ranking')} className="btn-secondary" style={{ width: '100%', marginTop: '15px', background: 'var(--card-border)', fontSize: '0.7rem' }}>ランキングを再計算</button>
       </div>
     </div>
   );
