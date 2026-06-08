@@ -22,8 +22,8 @@ const DB_PATH = './db.json';
 const defaultState = {
   settings: {
     current_q: 1,
-    q_text: "第1レースの勝者は？",
-    options: ["ランナーA", "ランナーB", "ランナーC", "ランナーD", "ランナーE"],
+    q_text: "世界の時価総額ランキングは？",
+    options: ["エヌビディア", "マイクロソフト", "アマゾン・ドット・コム", "ブロードコム", "台湾セミコンダクター・マニュファクチャリング", "アップル", "アルファベット"],
     is_open: false,
     show_ans: false,
     last_ans: ["", "", ""]
