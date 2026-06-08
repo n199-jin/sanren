@@ -206,7 +206,7 @@ function ParticipantView({ state, myName, setMyName, guesses, setGuesses, submit
             </div>
           ) : (
             <div style={{ padding: '40px' }}>
-                <CheckCircle size={64} style={{ color: 'var(--color-primary)', marginBottom: '20px' }} />
+                <CheckCircle size={64} style={{ color: 'var(--color-accent)', marginBottom: '20px' }} />
                 <h3>受付完了！発表をお待ちください</h3>
             </div>
           )
